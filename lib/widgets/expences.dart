@@ -1,3 +1,4 @@
+import 'package:expences_tracker/widgets/new_expence.dart';
 import 'package:flutter/material.dart';
 import 'package:expences_tracker/model/expence_model.dart';
 import 'package:expences_tracker/widgets/expences_liste.dart';
@@ -29,7 +30,7 @@ class _ExpencesState extends State<Expences> {
   void _AddExpence() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const Text("Model"),
+      builder: (context) => const NewExpence(),
     );
   }
 
