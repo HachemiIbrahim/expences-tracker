@@ -10,19 +10,30 @@ class NewExpence extends StatefulWidget {
 }
 
 class _NewExpenceState extends State {
+  final _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(20),
+    return Padding(
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           TextField(
+            controller: _controller,
             maxLength: 50,
             keyboardType: TextInputType.name,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               label: Text("Title"),
             ),
           ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text("Save"),
+              )
+            ],
+          )
         ],
       ),
     );
