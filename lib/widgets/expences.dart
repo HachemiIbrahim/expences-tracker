@@ -30,8 +30,14 @@ class _ExpencesState extends State<Expences> {
   void _AddExpence() {
     showModalBottomSheet(
       context: context,
-      builder: (context) => const NewExpence(),
+      builder: (context) => NewExpence(onAddExpence: _RegisterExpence),
     );
+  }
+
+  void _RegisterExpence(ExpenceModel expence) {
+    setState(() {
+      _ReqisteredExpences.add(expence);
+    });
   }
 
   @override
