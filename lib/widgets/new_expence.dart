@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:expences_tracker/model/expence_model.dart';
 
 class NewExpence extends StatefulWidget {
-  const NewExpence({super.key});
+  const NewExpence({super.key, required this.onAddExpence});
+  final void Function(ExpenceModel expence) onAddExpence;
 
   @override
   State<StatefulWidget> createState() {
@@ -11,7 +12,7 @@ class NewExpence extends StatefulWidget {
   }
 }
 
-class _NewExpenceState extends State {
+class _NewExpenceState extends State<NewExpence> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   Category _chosedCategory = Category.food;
@@ -62,6 +63,12 @@ class _NewExpenceState extends State {
       );
       return;
     }
+    widget.onAddExpence(ExpenceModel(
+        title: _titleController.text,
+        price: amount,
+        date: _pickedDate!,
+        category: _chosedCategory));
+    Navigator.pop(context);
   }
 
   @override
