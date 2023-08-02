@@ -39,6 +39,31 @@ class _NewExpenceState extends State {
     });
   }
 
+  void _submitExpence() {
+    final amount = double.tryParse(_amountController.text);
+    final isInvalid = amount == null || amount < 0;
+    if (_titleController.text.trim().isEmpty ||
+        isInvalid ||
+        _pickedDate == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("alert"),
+          content: const Text("Make sure to enter a valid data"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Okey"),
+            )
+          ],
+        ),
+      );
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -118,7 +143,7 @@ class _NewExpenceState extends State {
               Container(
                 margin: const EdgeInsets.only(left: 6, right: 8),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _submitExpence,
                   child: const Text("Save"),
                 ),
               ),
