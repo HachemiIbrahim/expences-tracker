@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:expences_tracker/model/expence_model.dart';
 
 class NewExpence extends StatefulWidget {
   const NewExpence({super.key});
@@ -12,6 +14,8 @@ class NewExpence extends StatefulWidget {
 class _NewExpenceState extends State {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  Category _chosedCategory = Category.food;
+  DateTime? _pickedDate;
 
   @override
   void dispose() {
@@ -20,16 +24,19 @@ class _NewExpenceState extends State {
     super.dispose();
   }
 
-  void _datePicker() {
+  void _datePicker() async {
     final first = DateTime(
         DateTime.now().year - 5, DateTime.now().month, DateTime.now().day);
     final last =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    showDatePicker(
+    final Date = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: first,
         lastDate: last);
+    setState(() {
+      _pickedDate = Date;
+    });
   }
 
   @override
@@ -65,8 +72,12 @@ class _NewExpenceState extends State {
               Expanded(
                 child: Row(
                   children: [
-                    const Text("Select date"),
-                    const SizedBox(height: 8),
+                    Text(
+                      _pickedDate == null
+                          ? "Select Date"
+                          : DateFormat.yMMMMd().format(_pickedDate!),
+                    ),
+                    const SizedBox(width: 8),
                     IconButton(
                       onPressed: _datePicker,
                       icon: const Icon(Icons.calendar_month),
@@ -78,6 +89,23 @@ class _NewExpenceState extends State {
           ),
           Row(
             children: [
+              DropdownButton(
+                  value: _chosedCategory,
+                  items: Category.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e.name.toUpperCase()),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _chosedCategory = value;
+                      });
+                    }
+                  }),
               Container(
                 margin: const EdgeInsets.only(left: 8),
                 child: ElevatedButton(
