@@ -14,6 +14,15 @@ void main() {
         appBarTheme: const AppBarTheme().copyWith(
             backgroundColor: KcolorScheme.onPrimaryContainer,
             foregroundColor: KcolorScheme.primaryContainer),
+        cardTheme: const CardTheme().copyWith(
+          color: KcolorScheme.secondaryContainer,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: KcolorScheme.primaryContainer,
+          ),
+        ),
       ),
       home: const Expences(),
     ),

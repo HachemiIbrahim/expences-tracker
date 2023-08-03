@@ -98,9 +98,7 @@ class _NewExpenceState extends State<NewExpence> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(width: 80),
               Expanded(
                 child: Row(
                   children: [
@@ -109,7 +107,6 @@ class _NewExpenceState extends State<NewExpence> {
                           ? "Select Date"
                           : DateFormat.yMMMMd().format(_pickedDate!),
                     ),
-                    const SizedBox(width: 8),
                     IconButton(
                       onPressed: _datePicker,
                       icon: const Icon(Icons.calendar_month),
