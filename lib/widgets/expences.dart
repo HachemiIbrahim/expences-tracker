@@ -29,6 +29,7 @@ class _ExpencesState extends State<Expences> {
   // ignore: non_constant_identifier_names
   void _AddExpence() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) => NewExpence(onAddExpence: _RegisterExpence),
     );
@@ -37,6 +38,12 @@ class _ExpencesState extends State<Expences> {
   void _RegisterExpence(ExpenceModel expence) {
     setState(() {
       _ReqisteredExpences.add(expence);
+    });
+  }
+
+  void _OnRemovedExpence(ExpenceModel expence) {
+    setState(() {
+      _ReqisteredExpences.remove(expence);
     });
   }
 
@@ -61,7 +68,9 @@ class _ExpencesState extends State<Expences> {
         child: Column(
           children: [
             Expanded(
-              child: ExpencesList(list: _ReqisteredExpences),
+              child: ExpencesList(
+                  onRemovedExpence: _OnRemovedExpence,
+                  list: _ReqisteredExpences),
             ),
           ],
         ),
