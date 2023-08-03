@@ -55,7 +55,6 @@ class _ExpencesState extends State<Expences> {
           "Expences Tracker",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color.fromARGB(255, 132, 39, 160),
         actions: [
           IconButton(
             onPressed: _AddExpence,
