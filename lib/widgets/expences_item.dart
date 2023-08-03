@@ -12,10 +12,11 @@ class ExpencesItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               expence.title,
-              style: const TextStyle(fontSize: 15),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 10),
             Row(

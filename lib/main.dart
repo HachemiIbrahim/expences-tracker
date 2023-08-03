@@ -23,6 +23,12 @@ void main() {
             backgroundColor: KcolorScheme.primaryContainer,
           ),
         ),
+        textTheme: ThemeData().textTheme.copyWith(
+              titleMedium: TextStyle(
+                  color: KcolorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
       ),
       home: const Expences(),
     ),
