@@ -31,3 +31,23 @@ class ExpenceModel {
     return DateFormat.yMMMMd().format(date);
   }
 }
+
+class ExpenceBucket {
+  const ExpenceBucket({required this.category, required this.expences});
+
+  final Category category;
+  final List<ExpenceModel> expences;
+
+  ExpenceBucket.forCategory(List<ExpenceModel> allExpences, this.category)
+      : expences = allExpences
+            .where((element) => element.category == category)
+            .toList();
+
+  double get totalExpence {
+    double sum = 0;
+    for (final expence in expences) {
+      sum += expence.price;
+    }
+    return sum;
+  }
+}
