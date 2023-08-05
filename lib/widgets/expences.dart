@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:expences_tracker/model/expence_model.dart';
 import 'package:expences_tracker/widgets/expences_liste.dart';
 
+import 'package:expences_tracker/widgets/chart/chart.dart';
+
 class Expences extends StatefulWidget {
   const Expences({super.key});
 
@@ -43,22 +45,30 @@ class _ExpencesState extends State<Expences> {
 
   void _OnRemovedExpence(ExpenceModel expence) {
     final _expenceIndex = _ReqisteredExpences.indexOf(expence);
+
     setState(() {
-      _ReqisteredExpences.remove(expence);
+      _ReqisteredExpences.removeAt(_expenceIndex);
     });
+
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: const Duration(seconds: 3),
-      content: const Text("Expense Deleted"),
-      action: SnackBarAction(
-        label: "Undo",
-        onPressed: () {
-          setState(() {
-            _ReqisteredExpences.insert(_expenceIndex, expence);
-          });
-        },
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text("Expense Deleted"),
+        action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              _ReqisteredExpences.insert(_expenceIndex, expence);
+            });
+
+            // Close the SnackBar after undoing
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -80,6 +90,9 @@ class _ExpencesState extends State<Expences> {
         margin: const EdgeInsets.only(top: 10),
         child: Column(
           children: [
+            Chart(
+              expenses: _ReqisteredExpences,
+            ),
             Expanded(
               child: ExpencesList(
                   onRemovedExpence: _OnRemovedExpence,
