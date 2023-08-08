@@ -9,7 +9,7 @@ class DatabaseHelper {
   static Future<Database> GetDatabase() async {
     return openDatabase(join(await getDatabasesPath(), _dbName),
         onCreate: (db, version) => db.execute(
-              'CREATE TABLE expenses(id TEXT PRIMARY KEY, title TEXT, price REAL, date TEXT, category TEXT)',
+              'CREATE TABLE expenses(id INTEGER PRIMARY KEY, title TEXT, price REAL, date TEXT, category TEXT)',
             ),
         version: _version);
   }
@@ -20,9 +20,10 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<int> deleteExpense(String? id) async {
+  static Future<int> deleteExpense(ExpenceModel expenceModel) async {
     final _db = await GetDatabase();
-    return await _db.delete("expenses", where: 'id = ?', whereArgs: [id]);
+    return await _db
+        .delete("expenses", where: 'id = ?', whereArgs: [expenceModel.id]);
   }
 
   static Future<List<ExpenceModel>?> getAllExpences() async {

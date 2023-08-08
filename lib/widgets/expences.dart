@@ -48,7 +48,7 @@ class _ExpencesState extends State<Expences> {
   }
 
   void _onRemovedExpence(ExpenceModel expence) async {
-    await DatabaseHelper.deleteExpense(expence.id);
+    await DatabaseHelper.deleteExpense(expence);
 
     setState(() {
       _registeredExpences.remove(expence);
