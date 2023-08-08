@@ -25,7 +25,7 @@ class ExpenceModel {
   final double price;
   final DateTime date;
   final Category category;
-  final String? id;
+  final int? id;
 
   String get formatedDate {
     return DateFormat.yMMMMd().format(date);
