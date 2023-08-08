@@ -18,17 +18,43 @@ class ExpenceModel {
       {required this.title,
       required this.price,
       required this.date,
-      required this.category})
-      : id = uuid.v4();
+      required this.category,
+      this.id});
 
   final String title;
-  final String id;
   final double price;
   final DateTime date;
   final Category category;
+  final String? id;
 
   String get formatedDate {
     return DateFormat.yMMMMd().format(date);
+  }
+
+  factory ExpenceModel.fromJson(Map<String, dynamic> json) => ExpenceModel(
+        id: json['id'],
+        title: json['title'],
+        price: json['price'],
+        date: DateTime.parse(json['date']),
+        category: _categoryFromString(json['category']),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'price': price,
+        'date': date.toIso8601String(),
+        'category': _categoryToString(category),
+      };
+
+  String _categoryToString(Category category) {
+    return category.toString().split('.').last;
+  }
+
+  static Category _categoryFromString(String categoryString) {
+    return Category.values.firstWhere(
+      (cat) => cat.toString() == 'Category.$categoryString',
+    );
   }
 }
 

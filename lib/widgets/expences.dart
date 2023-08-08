@@ -1,9 +1,11 @@
 import 'package:expences_tracker/widgets/new_expence.dart';
 import 'package:flutter/material.dart';
 import 'package:expences_tracker/model/expence_model.dart';
-import 'package:expences_tracker/widgets/expences_liste.dart';
 
 import 'package:expences_tracker/widgets/chart/chart.dart';
+
+import '../service/database_helper.dart';
+import 'expences_item.dart';
 
 class Expences extends StatefulWidget {
   const Expences({super.key});
@@ -15,55 +17,60 @@ class Expences extends StatefulWidget {
 }
 
 class _ExpencesState extends State<Expences> {
-  // ignore: non_constant_identifier_names
-  final List<ExpenceModel> _ReqisteredExpences = [
-    ExpenceModel(
-        title: "Flutter course",
-        price: 20,
-        date: DateTime.now(),
-        category: Category.work),
-    ExpenceModel(
-        title: "Travel",
-        price: 1200,
-        date: DateTime.now(),
-        category: Category.travel)
-  ];
-  // ignore: non_constant_identifier_names
-  void _AddExpence() {
+  late List<ExpenceModel> _registeredExpences = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExpenses();
+  }
+
+  void _loadExpenses() async {
+    final expenses = await DatabaseHelper.getAllExpences();
+    if (expenses != null) {
+      setState(() {
+        _registeredExpences = expenses;
+      });
+    }
+  }
+
+  void _addExpence() {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
-      builder: (context) => NewExpence(onAddExpence: _RegisterExpence),
+      builder: (context) => NewExpence(onAddExpence: _registerExpence),
     );
   }
 
-  void _RegisterExpence(ExpenceModel expence) {
-    setState(() {
-      _ReqisteredExpences.add(expence);
-    });
+  void _registerExpence(ExpenceModel expence) async {
+    await DatabaseHelper.addExpense(expence);
+    _loadExpenses();
   }
 
-  void _OnRemovedExpence(ExpenceModel expence) {
-    final _expenceIndex = _ReqisteredExpences.indexOf(expence);
+  void _onRemovedExpence(ExpenceModel expence) async {
+    await DatabaseHelper.deleteExpense(expence.id);
 
     setState(() {
-      _ReqisteredExpences.removeAt(_expenceIndex);
+      _registeredExpences.remove(expence);
     });
 
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).clearSnackBars();
 
+    // ignore: use_build_context_synchronously
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
         content: const Text("Expense Deleted"),
         action: SnackBarAction(
           label: "Undo",
-          onPressed: () {
-            setState(() {
-              _ReqisteredExpences.insert(_expenceIndex, expence);
-            });
-
+          onPressed: () async {
+            int undoResult = await DatabaseHelper.addExpense(expence);
+            if (undoResult > 0) {
+              _loadExpenses();
+            }
             // Close the SnackBar after undoing
+            // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
         ),
@@ -81,7 +88,7 @@ class _ExpencesState extends State<Expences> {
         ),
         actions: [
           IconButton(
-            onPressed: _AddExpence,
+            onPressed: _addExpence,
             icon: const Icon(Icons.add, color: Colors.white),
           ),
         ],
@@ -91,13 +98,32 @@ class _ExpencesState extends State<Expences> {
         child: Column(
           children: [
             Chart(
-              expenses: _ReqisteredExpences,
+              expenses: _registeredExpences,
             ),
             Expanded(
-              child: ExpencesList(
-                  onRemovedExpence: _OnRemovedExpence,
-                  list: _ReqisteredExpences),
-            ),
+                child: ListView.builder(
+              itemCount: _registeredExpences.length,
+              itemBuilder: (context, index) => Dismissible(
+                background: Container(
+                  color: Colors.redAccent,
+                  margin: EdgeInsets.symmetric(
+                      horizontal:
+                          Theme.of(context).cardTheme.margin!.horizontal),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.centerLeft,
+                  child: const Icon(
+                    Icons.delete,
+                  ),
+                ),
+                key: ValueKey(index),
+                onDismissed: (direction) {
+                  _onRemovedExpence(_registeredExpences[index]);
+                },
+                child: ExpencesItem(
+                  expence: _registeredExpences[index],
+                ),
+              ),
+            )),
           ],
         ),
       ),
