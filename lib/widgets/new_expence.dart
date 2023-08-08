@@ -15,6 +15,7 @@ class NewExpence extends StatefulWidget {
 class _NewExpenceState extends State<NewExpence> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  ExpenceModel? expenceModel;
   Category _chosedCategory = Category.food;
   DateTime? _pickedDate;
 
@@ -64,6 +65,7 @@ class _NewExpenceState extends State<NewExpence> {
       return;
     }
     widget.onAddExpence(ExpenceModel(
+        id: expenceModel?.id,
         title: _titleController.text,
         price: amount,
         date: _pickedDate!,
