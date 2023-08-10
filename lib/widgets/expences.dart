@@ -36,6 +36,7 @@ class _ExpencesState extends State<Expences> {
 
   void _addExpence() {
     showModalBottomSheet(
+      useSafeArea: true,
       isScrollControlled: true,
       context: context,
       builder: (context) => NewExpence(onAddExpence: _registerExpence),
