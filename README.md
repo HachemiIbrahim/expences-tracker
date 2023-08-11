@@ -1,6 +1,13 @@
 # expences_tracker
 
-The Expense Tracker Flutter App is a straightforward mobile application designed to help you manage and your expenses with ease. This user-friendly app enables you to log your expenses, categorize them, and track your spending over time. Whether you're a budget-conscious individual or someone looking to gain better control of their finances, this app provides a simple solution to stay on top of your expenses.
+This is an expenses tracker app built using Flutter and SQFlite. It allows you to easily track your daily expenses and manage your finances.
+<h1>Features</h1>
+
+Add, edit, and delete expenses<br>
+Categorize expenses<br>
+Generate charts<br>
+data storage<br>
+
 <h1>Screenshots</h1>
 <img src="images/Screenshot_20230811_110521.jpg" alt="Image Description" width="300" height="500">
 <img src="images/Screenshot_20230811_110528.jpg" alt="Image Description" width="300" height="500">
