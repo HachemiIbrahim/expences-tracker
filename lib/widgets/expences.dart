@@ -17,6 +17,7 @@ class Expences extends StatefulWidget {
 }
 
 class _ExpencesState extends State<Expences> {
+  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   late List<ExpenceModel> _registeredExpences = [];
 
   @override
@@ -48,84 +49,83 @@ class _ExpencesState extends State<Expences> {
     _loadExpenses();
   }
 
-  void _onRemovedExpence(ExpenceModel expence) async {
+  void _onRemovedExpence(ExpenceModel expence, BuildContext context) async {
     await DatabaseHelper.deleteExpense(expence);
 
     setState(() {
       _registeredExpences.remove(expence);
     });
 
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).clearSnackBars();
+    _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
 
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        content: const Text("Expense Deleted"),
-        action: SnackBarAction(
-          label: "Undo",
-          onPressed: () async {
-            int undoResult = await DatabaseHelper.addExpense(expence);
-            if (undoResult > 0) {
-              _loadExpenses();
-            }
-            // Close the SnackBar after undoing
-            // ignore: use_build_context_synchronously
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
+    final snackBar = SnackBar(
+      duration: const Duration(seconds: 3),
+      content: const Text("Expense Deleted"),
+      action: SnackBarAction(
+        label: "Undo",
+        onPressed: () async {
+          int undoResult = await DatabaseHelper.addExpense(expence);
+          if (undoResult > 0) {
+            _loadExpenses();
+          }
+          _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+        },
       ),
     );
+
+    _scaffoldMessengerKey.currentState?.showSnackBar(snackBar);
   }
 
   @override
   Widget build(context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Expences Tracker",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _addExpence,
-            icon: const Icon(Icons.add, color: Colors.white),
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Expences Tracker",
+            style: TextStyle(color: Colors.white),
           ),
-        ],
-      ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 10),
-        child: Column(
-          children: [
-            Chart(
-              expenses: _registeredExpences,
+          actions: [
+            IconButton(
+              onPressed: _addExpence,
+              icon: const Icon(Icons.add, color: Colors.white),
             ),
-            Expanded(
-                child: ListView.builder(
-              itemCount: _registeredExpences.length,
-              itemBuilder: (context, index) => Dismissible(
-                background: Container(
-                  color: Colors.redAccent,
-                  margin: EdgeInsets.symmetric(
-                      horizontal:
-                          Theme.of(context).cardTheme.margin!.horizontal),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  alignment: Alignment.centerLeft,
-                  child: const Icon(
-                    Icons.delete,
+          ],
+        ),
+        body: Container(
+          margin: const EdgeInsets.only(top: 10),
+          child: Column(
+            children: [
+              Chart(
+                expenses: _registeredExpences,
+              ),
+              Expanded(
+                  child: ListView.builder(
+                itemCount: _registeredExpences.length,
+                itemBuilder: (context, index) => Dismissible(
+                  background: Container(
+                    color: Colors.redAccent,
+                    margin: EdgeInsets.symmetric(
+                        horizontal:
+                            Theme.of(context).cardTheme.margin!.horizontal),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    alignment: Alignment.centerLeft,
+                    child: const Icon(
+                      Icons.delete,
+                    ),
+                  ),
+                  key: ValueKey(index),
+                  onDismissed: (direction) {
+                    _onRemovedExpence(_registeredExpences[index], context);
+                  },
+                  child: ExpencesItem(
+                    expence: _registeredExpences[index],
                   ),
                 ),
-                key: ValueKey(index),
-                onDismissed: (direction) {
-                  _onRemovedExpence(_registeredExpences[index]);
-                },
-                child: ExpencesItem(
-                  expence: _registeredExpences[index],
-                ),
-              ),
-            )),
-          ],
+              )),
+            ],
+          ),
         ),
       ),
     );
